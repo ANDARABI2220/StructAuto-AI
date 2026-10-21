@@ -1,0 +1,45 @@
+image: node:22-alpine
+
+stages:
+  - lint
+  - test
+  - build
+  - deploy_staging
+
+variables:
+  npm_config_cache: '$CI_PROJECT_DIR/.npm'
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm/
+
+before_script:
+  - npm ci || npm install
+
+lint:
+  stage: lint
+  script:
+    - npm run lint
+
+test:
+  stage: test
+  script:
+    - npm test
+
+build:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    name: "structauto-dist-$CI_COMMIT_REF_NAME"
+    paths:
+      - dist/
+    expire_in: 1 week
+
+deploy_staging:
+  stage: deploy_staging
+  script:
+    - echo "Deploying StructAuto AI to Staging environment..."
+  only:
+    - main

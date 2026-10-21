@@ -1,0 +1,93 @@
+{
+  "entities": {
+    "userProfile": {
+      "title": "UserProfile",
+      "description": "User account profile and role details",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "format": "email", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "photoURL": { "type": "string", "maxLength": 1024 },
+        "role": { "type": "string", "enum": ["structural_engineer", "lead_engineer", "auditor", "admin"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "createdAt"]
+    },
+    "structuralProject": {
+      "title": "StructuralProject",
+      "description": "Canonical Structural Model (CSM) project data, analysis runs and metadata",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 256 },
+        "description": { "type": "string", "maxLength": 2048 },
+        "format": { "type": "string", "enum": ["edb", "e2k", "mat", "prota", "ifc", "saf", "csv"] },
+        "sourceFileName": { "type": "string", "maxLength": 256 },
+        "unitSystem": { "type": "string", "enum": ["metric_si", "us_customary"] },
+        "jurisdiction": { "type": "string", "maxLength": 64 },
+        "storyCount": { "type": "number" },
+        "status": { "type": "string", "enum": ["draft", "imported", "analyzed", "verified", "signed_off"] },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "csmData": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "ownerId", "format", "createdAt"]
+    },
+    "verificationRecord": {
+      "title": "VerificationRecord",
+      "description": "Engineering independent verification and benchmark run",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "projectId": { "type": "string", "maxLength": 128 },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "speedupRatio": { "type": "number" },
+        "accuracyScore": { "type": "number" },
+        "complianceScore": { "type": "number" },
+        "silentErrorsCount": { "type": "number" },
+        "engineerNotes": { "type": "string", "maxLength": 4096 },
+        "signedOffBy": { "type": "string", "maxLength": 256 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "projectId", "ownerId", "speedupRatio", "accuracyScore", "createdAt"]
+    },
+    "evidenceBundle": {
+      "title": "EvidenceBundle",
+      "description": "Immutable hash-chained evidence bundle for audit and compliance",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "projectId": { "type": "string", "maxLength": 128 },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "hash": { "type": "string", "maxLength": 128 },
+        "previousHash": { "type": "string", "maxLength": 128 },
+        "ruleSetVersion": { "type": "string", "maxLength": 64 },
+        "vendorVersion": { "type": "string", "maxLength": 64 },
+        "status": { "type": "string", "enum": ["pending", "verified", "archived"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "projectId", "ownerId", "hash", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/userProfile" },
+      "description": "Stores user profiles with owner-restricted access"
+    },
+    "/projects/{projectId}": {
+      "schema": { "$ref": "#/entities/structuralProject" },
+      "description": "Stores structural engineering projects and CSM data"
+    },
+    "/verifications/{verificationId}": {
+      "schema": { "$ref": "#/entities/verificationRecord" },
+      "description": "Engineering verification runs, speedup benchmarks and sign-offs"
+    },
+    "/evidence/{evidenceId}": {
+      "schema": { "$ref": "#/entities/evidenceBundle" },
+      "description": "Immutable audit evidence bundles"
+    }
+  }
+}

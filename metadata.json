@@ -1,0 +1,6 @@
+{
+  "name": "StructAuto AI — سازه‌یار هوشمند اتوماسیون سازه",
+  "description": "سامانه جامع خودکارسازی و هوش مصنوعی مهندسی سازه برای نرم‌افزارهای ETABS، ETABS MATE، ProtaStructure و ProtaDetails بر پایه مدل استاندارد CSM",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
